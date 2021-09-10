@@ -1,4 +1,4 @@
-const Thing = require('../models/Thing');
+const Thing = require('../models/Sauce');
 const fs = require('fs');
 
 exports.createThing = (req, res, next) => {
@@ -6,7 +6,11 @@ exports.createThing = (req, res, next) => {
   delete thingObject._id;
   const thing = new Thing({
     ...thingObject,
-    imageUrl: `${req.protocol}://${req.get('localhost:3000')}/images/${req.file.filename}`
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+    likes: 0,
+    dislikes: 0,
+    usersLiked: [' '],
+    usersdisLiked: [' '],
   });
   thing.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
@@ -19,11 +23,16 @@ exports.getOneThing = (req, res, next) => {
     .catch(error => res.status(404).json({ error }));
 };
 
-exports.modifyThing = (req, res, next) => {
+exports.updateThing = (req, res, next) => {
+ const thingObject = req.file ?
+  {
+    ...JSON.parse(req.body.thing),
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`} : { ...req.body }
+
   Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-    .catch(error => res.status(400).json({ error }));
-};
+      .then(() => res.status(200).json({ message: 'Objet modifié !'}))
+      .catch(error => res.status(400).json({ error }));
+}; 
 
 exports.deleteThing = (req, res, next) => {
   Thing.findOne({ _id: req.params.id })
