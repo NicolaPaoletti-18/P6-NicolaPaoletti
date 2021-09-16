@@ -1,16 +1,23 @@
 //emporter
-const express = require('express');
-//const bodyParser = require('body-parser');
+
+// import des modules npm - Ajout des plugins externes
+const express = require('express');// Importation d'express => Framework basé sur node.j
+
+// On importe mongoose pour pouvoir utiliser la base de données
 const mongoose = require('mongoose');
+
+// Plugin qui sert à éliminer  les err cors 
 const cors = require('cors');
+
+// Plugin qui sert dans l'upload des images et permet de travailler avec les répertoires et chemin de fichier
 const path = require('path');
 
-
+// On importe la route dédiée aux sauces
 const sauceRoutes = require('./routes/sauce');
+// On importe la route dédiée aux users
 const userRoutes = require('./routes/user');
 
-
-
+// Connection à la base de données MongoDB 
 mongoose.connect('mongodb+srv://NICOLA18:Ilmioaccount!!97@cluster0.zm2so.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -21,9 +28,10 @@ const app = express();
 
 app.use(cors());
 
+// Création d'une application express
 app.use(express.json());
 
-/*app.use((req, res, next) => {
+app.use((req, res, next) => {
   //Ces headers permettent :
   //d'accéder à notre API depuis n'importe quelle origine ( '*' ) ;
   res.setHeader('Access-Control-Allow-Origin', '*'); 
@@ -36,7 +44,7 @@ app.use(express.json());
   //res.setHeader('Access-Control-Allow-Credentials', true);
 
   next();
-}); */
+}); 
 
 
 
@@ -45,4 +53,5 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 
+//Export de l'application express pour déclaration dans server.js
 module.exports = app;
